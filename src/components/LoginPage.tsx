@@ -29,8 +29,8 @@ export default function LoginPage() {
         console.log("로그인 성공", response.data);
         const user = response.data.result;
         localStorage.setItem("email", user.email);
-        localStorage.setItem("accessToken", user.accessToken);
-        localStorage.setItem("accessToken", user.refreshToken);
+        localStorage.setItem("accessToken", user.token.accessToken);
+        localStorage.setItem("refreshToken", user.token.refreshToken);
         setIsLogin(true);
         router.push("/report");
       })
