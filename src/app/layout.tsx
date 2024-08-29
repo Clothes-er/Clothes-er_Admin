@@ -6,12 +6,25 @@ import styled, { ThemeProvider } from "styled-components";
 import StyledJsxRegistry from "./registry";
 import Header from "@/components/Header";
 import VerticalTab from "@/components/VerticalTab";
+import { useEffect, useState } from "react";
+import { getToken } from "@/hooks/getToken";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [email, setEmail] = useState<string | null>(null);
+  const [isLogin, setIsLogin] = useState<boolean>(!!getToken());
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && isLogin) {
+      const storedEmail = localStorage.getItem("email");
+      setEmail(storedEmail);
+    }
+  }, [isLogin]);
+
   return (
     <html>
       <head>
@@ -24,13 +37,15 @@ export default function RootLayout({
         <StyledJsxRegistry>
           <ThemeProvider theme={theme}>
             <GlobalStyles />
-            <Column>
-              <Header />
-              <Row>
-                <VerticalTab />
-                {children}
-              </Row>
-            </Column>
+            <AuthProvider>
+              <Column>
+                <Header />
+                <Row>
+                  <VerticalTab />
+                  {children}
+                </Row>
+              </Column>
+            </AuthProvider>
           </ThemeProvider>
         </StyledJsxRegistry>
       </body>

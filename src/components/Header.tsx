@@ -1,22 +1,39 @@
+import { useAuth } from "@/context/AuthContext";
 import { getToken } from "@/hooks/getToken";
 import { theme } from "@/styles/theme";
 import Image from "next/image";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Header = () => {
-  const isLogin = !!getToken();
+  const router = useRouter();
+  const { isLogin, setIsLogin } = useAuth();
+
+  const email = isLogin ? localStorage.getItem("email") : null;
+
+  const handleLog = () => {
+    if (isLogin) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("email");
+      setIsLogin(false);
+    }
+    router.push("/");
+  };
 
   return (
     <Wrapper>
       <Image src="/assets/images/logo.svg" width={172} height={33} alt="logo" />
       <Right>
-        <p>
+        <Info>
           {isLogin
-            ? "관리자 {유진주} 님"
+            ? `관리자   ${email} 님`
             : "접근 권한을 얻기 위해서는 로그인이 필요해요."}
-        </p>
-        <Button $isLogin={isLogin}>로그인</Button>
+        </Info>
+        <Button $isLogin={isLogin} onClick={handleLog}>
+          {isLogin ? "로그아웃" : "로그인"}
+        </Button>
       </Right>
     </Wrapper>
   );
@@ -42,8 +59,14 @@ const Right = styled.div`
   align-items: center;
   gap: 35px;
 `;
+
+const Info = styled.div`
+  color: ${theme.colors.white};
+  ${(props) => props.theme.fonts.b2_medium};
+`;
+
 const Button = styled.button<{ $isLogin: boolean }>`
-  padding: 13px 26px;
+  padding: 10px 26px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
