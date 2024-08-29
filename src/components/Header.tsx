@@ -43,8 +43,8 @@ export default Header;
 
 const Wrapper = styled.div`
   width: 100%;
-  height: 90px;
-  padding: 28px 50px;
+  height: 70px;
+  padding: 20px 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
