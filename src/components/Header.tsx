@@ -10,13 +10,13 @@ const Header = () => {
   const router = useRouter();
   const { isLogin, setIsLogin } = useAuth();
 
-  const email = isLogin ? localStorage.getItem("email") : null;
+  const name = isLogin ? localStorage.getItem("name") : null;
 
   const handleLog = () => {
     if (isLogin) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
-      localStorage.removeItem("email");
+      localStorage.removeItem("name");
       setIsLogin(false);
     }
     router.push("/");
@@ -28,7 +28,7 @@ const Header = () => {
       <Right>
         <Info>
           {isLogin
-            ? `관리자   ${email} 님`
+            ? `관리자   ${name} 님`
             : "접근 권한을 얻기 위해서는 로그인이 필요해요."}
         </Info>
         <Button $isLogin={isLogin} onClick={handleLog}>
