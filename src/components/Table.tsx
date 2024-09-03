@@ -51,56 +51,58 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
   return (
     <>
       <TableWrapper>
-        <thead>
-          <tr>
-            {columns.map((column, index) => (
-              <Th key={index}>{column}</Th>
+        <TableDiv>
+          <thead>
+            <tr>
+              {columns.map((column, index) => (
+                <Th key={index}>{column}</Th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {list.map((item, index) => (
+              <Tr key={index} onClick={handleMoreModal(item.id)}>
+                {tableType === "report" ? (
+                  <>
+                    <Td>{index + 1}</Td>
+                    <Td>{item.reporteeNickname}</Td>
+                    <Td>{item.reason}</Td>
+                    <Td>{item.content}</Td>
+                    <Td>{item.closetScore}</Td>
+                    <Td>
+                      {item.state === "PENDING" ? "접수 완료" : "처리 완료"}
+                    </Td>
+                    <Td>
+                      {item.action === null ? (
+                        <Button>조치 선택</Button>
+                      ) : item.action === "RESTRICTED" ? (
+                        "이용 제한"
+                      ) : item.action === "DOCKED" ? (
+                        "처벌"
+                      ) : (
+                        "무시"
+                      )}
+                    </Td>
+                  </>
+                ) : (
+                  <>
+                    <Td>{item.name}</Td>
+                    <Td>{item.nickname}</Td>
+                    <Td>{item.email}</Td>
+                    <Td>{item.phoneNumber}</Td>
+                    <Td>{item.closetScore}</Td>
+                    <Td>
+                      {" "}
+                      {item.positiveKeywordCount} / {item.negativeKeywordCount}{" "}
+                    </Td>
+                    <Td>{item.rentalCount}</Td>
+                    <Td>{item.isRestricted ? "제한됨" : "정상"}</Td>
+                  </>
+                )}
+              </Tr>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-          {list.map((item, index) => (
-            <Tr key={index} onClick={handleMoreModal(item.id)}>
-              {tableType === "report" ? (
-                <>
-                  <Td>{index + 1}</Td>
-                  <Td>{item.reporteeNickname}</Td>
-                  <Td>{item.reason}</Td>
-                  <Td>{item.content}</Td>
-                  <Td>{item.closetScore}</Td>
-                  <Td>
-                    {item.state === "PENDING" ? "접수 완료" : "처리 완료"}
-                  </Td>
-                  <Td>
-                    {item.action === null ? (
-                      <Button>조치 선택</Button>
-                    ) : item.action === "RESTRICTED" ? (
-                      "이용 제한"
-                    ) : item.action === "DOCKED" ? (
-                      "처벌"
-                    ) : (
-                      "무시"
-                    )}
-                  </Td>
-                </>
-              ) : (
-                <>
-                  <Td>{item.name}</Td>
-                  <Td>{item.nickname}</Td>
-                  <Td>{item.email}</Td>
-                  <Td>{item.phoneNumber}</Td>
-                  <Td>{item.closetScore}</Td>
-                  <Td>
-                    {" "}
-                    {item.positiveKeywordCount} / {item.negativeKeywordCount}{" "}
-                  </Td>
-                  <Td>{item.rentalCount}</Td>
-                  <Td>{item.isRestricted ? "제한됨" : "정상"}</Td>
-                </>
-              )}
-            </Tr>
-          ))}
-        </tbody>
+          </tbody>
+        </TableDiv>
       </TableWrapper>
       {more && (
         <Modal>
@@ -154,16 +156,24 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
 
 export default Table;
 
-const TableWrapper = styled.table`
+const TableWrapper = styled.div`
+  width: 100%;
+  flex-shrink: 0;
+  border-radius: 10px;
+  padding: 0px;
+  border: 1px solid ${theme.colors.purple500};
+  background: ${theme.colors.white};
+  overflow: hidden;
+`;
+
+const TableDiv = styled.table`
   width: 100%;
   height: 100%;
   border-collapse: collapse;
-  flex-shrink: 0;
   border-radius: 10px;
+  border: none;
   padding: 0 25px;
-  border: 1px solid ${theme.colors.purple500};
   background: ${theme.colors.white};
-  overflow-y: scroll;
 `;
 
 const Th = styled.th`
@@ -212,8 +222,9 @@ const Modal = styled.div`
   background: #fff;
   box-shadow: 4px 4px 30px 3px rgba(185, 185, 185, 0.25);
   position: fixed;
-  top: 300px;
-  left: 500px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 const ModalContent = styled.div`
