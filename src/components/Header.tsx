@@ -1,9 +1,8 @@
 import { useAuth } from "@/context/AuthContext";
-import { getToken } from "@/hooks/getToken";
 import { theme } from "@/styles/theme";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 
 const Header = () => {
