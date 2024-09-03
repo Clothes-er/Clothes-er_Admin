@@ -13,6 +13,7 @@ interface TableProps {
 const Table: React.FC<TableProps> = ({ tableType, list }) => {
   const [more, setMore] = useState(false);
   const [detailData, setDetailData] = useState<any>(null);
+  const [state, setState] = useState<string>();
 
   const handleMoreModal = (id: number) => async () => {
     if (tableType === "report") {
@@ -20,12 +21,28 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
         const response = await AuthAxios.get(`/api/v1/admin/reports/${id}`);
         setDetailData(response.data.result);
         setMore(true);
+        setState(response.data.result.action);
       } catch (error) {
         console.error("상세 정보 조회 실패", error);
       }
     } else {
       return;
     }
+  };
+
+  const handleChangeState = (box: string) => () => {
+    if (state !== box) {
+      setState(box);
+    } else {
+      setState("");
+    }
+  };
+
+  const handleSave = (reportId: number) => async () => {
+    await AuthAxios.post(`/api/v1/admin/reports/${reportId}`, {
+      action: state,
+    });
+    setMore(false);
   };
 
   const columns =
@@ -62,11 +79,11 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
             </tr>
           </thead>
           <tbody>
-            {list.map((item, index) => (
-              <Tr key={index} onClick={handleMoreModal(item.id)}>
+            {list.map((item) => (
+              <Tr key={item.id} onClick={handleMoreModal(item.id)}>
                 {tableType === "report" ? (
                   <>
-                    <Td>{index + 1}</Td>
+                    <Td>{item.id}</Td>
                     <Td>{item.reporteeNickname}</Td>
                     <Td>{item.reason}</Td>
                     <Td $summary={true}>{item.content}</Td>
@@ -143,7 +160,13 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
               <DetailValue>
                 <StateBoxList>
                   {STATE_BOX.map((item) => (
-                    <StateBox key={item.id} text={item.text} check={false} />
+                    <StateBox
+                      key={item.id}
+                      text={item.text}
+                      check={item.state === state}
+                      onClick={handleChangeState(item.state)}
+                      disabled={detailData.action !== null}
+                    />
                   ))}
                 </StateBoxList>
               </DetailValue>
@@ -151,7 +174,12 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
           </ModalContent>
           <ButtonModal>
             <CloseButton onClick={() => setMore(false)}>닫기</CloseButton>
-            <CloseButton onClick={() => setMore(false)}>적용하기</CloseButton>
+            <CloseButton
+              onClick={handleSave(detailData.id)}
+              disabled={detailData.action !== null || state == ""}
+            >
+              적용하기
+            </CloseButton>
           </ButtonModal>
         </Modal>
       )}
@@ -269,13 +297,14 @@ const DetailRow = styled.div`
 `;
 
 const DetailLabel = styled.div`
-  width: 100px;
+  width: 150px;
   font-weight: bold;
   margin-right: 10px;
   color: #231e5c;
 `;
 
 const DetailValue = styled.div`
+  width: 100%;
   color: ${theme.colors.b100};
 `;
 
@@ -300,9 +329,14 @@ const CloseButton = styled.button`
   background: ${theme.colors.purple500};
   color: ${theme.colors.white};
   font-size: 16px;
+  transition: color 200ms, background-color 200ms;
   cursor: pointer;
 
   &:hover {
     background: ${theme.colors.purple400};
+  }
+
+  &:disabled {
+    background-color: ${theme.colors.gray300};
   }
 `;

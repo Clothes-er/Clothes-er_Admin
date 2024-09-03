@@ -4,12 +4,18 @@ import styled from "styled-components";
 interface StateBoxProps {
   check: boolean;
   text: string;
+  onClick: () => void;
+  disabled?: boolean;
 }
 
 const StateBox = (props: StateBoxProps) => {
-  const { check, text } = props;
+  const { check, text, onClick, disabled = false } = props;
 
-  return <Box $check={check}>{text}</Box>;
+  return (
+    <Box $check={check} onClick={onClick} disabled={disabled}>
+      {text}
+    </Box>
+  );
 };
 
 export default StateBox;
