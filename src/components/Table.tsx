@@ -1,7 +1,7 @@
 import AuthAxios from "@/api/authAxios";
 import { theme } from "@/styles/theme";
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 interface TableProps {
   tableType: "report" | "user";
@@ -67,14 +67,16 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
                     <Td>{index + 1}</Td>
                     <Td>{item.reporteeNickname}</Td>
                     <Td>{item.reason}</Td>
-                    <Td>{item.content}</Td>
+                    <Td $summary={true}>{item.content}</Td>
                     <Td>{item.closetScore}</Td>
                     <Td>
                       {item.state === "PENDING" ? "접수 완료" : "처리 완료"}
                     </Td>
                     <Td>
                       {item.action === null ? (
-                        <Button>조치 선택</Button>
+                        <ButtonWrapper>
+                          <Button>조치 선택</Button>
+                        </ButtonWrapper>
                       ) : item.action === "RESTRICTED" ? (
                         "이용 제한"
                       ) : item.action === "DOCKED" ? (
@@ -192,13 +194,28 @@ const Tr = styled.tr`
   }
 `;
 
-const Td = styled.td`
+const Td = styled.td<{ $summary?: boolean }>`
   padding: 10px;
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray300};
   text-align: center;
   white-space: nowrap;
   color: ${theme.colors.b100};
   ${(props) => props.theme.fonts.b2_regular};
+
+  ${({ $summary }) =>
+    $summary &&
+    css`
+      max-width: 200px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      word-wrap: break-word;
+    `}
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Button = styled.button`
