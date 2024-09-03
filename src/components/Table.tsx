@@ -1,7 +1,9 @@
 import AuthAxios from "@/api/authAxios";
+import { STATE_BOX } from "@/constants/state";
 import { theme } from "@/styles/theme";
 import React, { useState } from "react";
 import styled, { css } from "styled-components";
+import StateBox from "./StateBox";
 
 interface TableProps {
   tableType: "report" | "user";
@@ -139,17 +141,18 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
             <DetailRow>
               <DetailLabel>상태 변경</DetailLabel>{" "}
               <DetailValue>
-                {detailData.action === null
-                  ? "조치 선택"
-                  : detailData.action === "RESTRICTED"
-                  ? "이용 제한"
-                  : detailData.action === "DOCKED"
-                  ? "처벌"
-                  : "무시"}
+                <StateBoxList>
+                  {STATE_BOX.map((item) => (
+                    <StateBox key={item.id} text={item.text} check={false} />
+                  ))}
+                </StateBoxList>
               </DetailValue>
             </DetailRow>
           </ModalContent>
-          <CloseButton onClick={() => setMore(false)}>닫기</CloseButton>
+          <ButtonModal>
+            <CloseButton onClick={() => setMore(false)}>닫기</CloseButton>
+            <CloseButton onClick={() => setMore(false)}>적용하기</CloseButton>
+          </ButtonModal>
         </Modal>
       )}
     </>
@@ -216,6 +219,7 @@ const ButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 20px;
 `;
 
 const Button = styled.button`
@@ -247,6 +251,7 @@ const Modal = styled.div`
 const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
+  position: relative;
 `;
 
 const Title = styled.h2`
@@ -272,6 +277,19 @@ const DetailLabel = styled.div`
 
 const DetailValue = styled.div`
   color: ${theme.colors.b100};
+`;
+
+const StateBoxList = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+const ButtonModal = styled(ButtonWrapper)`
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translate(-50%);
 `;
 
 const CloseButton = styled.button`
