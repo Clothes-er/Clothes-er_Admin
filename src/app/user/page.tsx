@@ -73,7 +73,7 @@ export default function UsrePage() {
 
 const Layout = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow-x: hidden;
   padding: 78px 50px;
   display: flex;

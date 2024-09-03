@@ -49,7 +49,7 @@ export default function ReportPage() {
 
 const Layout = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow-x: hidden;
   padding: 78px 50px;
   display: flex;

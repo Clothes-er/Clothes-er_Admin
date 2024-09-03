@@ -9,11 +9,11 @@ const GlobalStyles = createGlobalStyle`
 }
 
 html {
-  width: 100%;
+  width: 100vw;
   height: 100%;
   margin: 0 auto;
   box-shadow: 0px 0px 64px 0px rgba(30, 41, 59, 0.1);
-
+  
   ::-webkit-scrollbar {
     width: 8px;
   }
@@ -31,7 +31,6 @@ html {
 body {
   width: 100%;
   height: 100%;
-  max-width: 480px;
   font-family: "Pretendard";
   white-space: pre-line;
 }

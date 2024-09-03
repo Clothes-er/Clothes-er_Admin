@@ -90,7 +90,10 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
                   <Td>{item.email}</Td>
                   <Td>{item.phoneNumber}</Td>
                   <Td>{item.closetScore}</Td>
-                  <Td>{item.keywordCount}</Td>
+                  <Td>
+                    {" "}
+                    {item.positiveKeywordCount} / {item.negativeKeywordCount}{" "}
+                  </Td>
                   <Td>{item.rentalCount}</Td>
                   <Td>{item.isRestricted ? "제한됨" : "정상"}</Td>
                 </>
@@ -153,7 +156,7 @@ export default Table;
 
 const TableWrapper = styled.table`
   width: 100%;
-  height: 500px;
+  height: 100%;
   border-collapse: collapse;
   flex-shrink: 0;
   border-radius: 10px;

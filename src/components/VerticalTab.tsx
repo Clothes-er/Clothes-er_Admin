@@ -33,7 +33,7 @@ const Container = styled.div`
   align-items: flex-start;
   gap: 41px;
   width: 330px;
-  height: 100vh;
+  height: 100%;
   padding: 51px 52px;
   border-right: 1px solid #c6c6c6;
   background: #fafaff;

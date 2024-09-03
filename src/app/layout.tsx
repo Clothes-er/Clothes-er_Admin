@@ -63,5 +63,7 @@ const Column = styled.div`
 `;
 
 const Row = styled.div`
+  width: 100%;
+  height: calc(100% - 70px);
   display: flex;
 `;
