@@ -14,6 +14,8 @@ interface ReportList {
   closetScore: number;
   state: string;
   action: string;
+  isRented: boolean;
+  userSid: string;
   createdAt: string;
 }
 

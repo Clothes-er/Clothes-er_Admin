@@ -30,6 +30,19 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
     }
   };
 
+  const handleShowChat = (userSid: string) => async () => {
+    try {
+      const response = await AuthAxios.get(
+        `/api/v1/admin/chats/${userSid}/rented-rooms`
+      );
+      setDetailData(response.data.result);
+      setMore(true);
+      setState(response.data.result.action);
+    } catch (error) {
+      console.error("상세 정보 조회 실패", error);
+    }
+  };
+
   const handleChangeState = (box: string) => () => {
     if (state !== box) {
       setState(box);
@@ -156,6 +169,22 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
               </DetailValue>
             </DetailRow>
             <DetailRow>
+              <DetailLabel>현재 거래</DetailLabel>{" "}
+              <DetailValue>
+                {detailData.isRented ? "거래 중" : "거래 없음"}
+              </DetailValue>
+            </DetailRow>
+            <DetailRow>
+              <DetailLabel>채팅 내역 보기</DetailLabel>{" "}
+              <DetailValue>
+                {detailData.userSid && (
+                  <ChatButton onClick={handleShowChat(detailData.userSid)}>
+                    보기
+                  </ChatButton>
+                )}
+              </DetailValue>
+            </DetailRow>
+            <DetailRow>
               <DetailLabel>상태 변경</DetailLabel>{" "}
               <DetailValue>
                 <StateBoxList>
@@ -265,7 +294,7 @@ const Button = styled.button`
 
 const Modal = styled.div`
   width: 496px;
-  height: 549px;
+  height: 579px;
   padding: 58px 55px;
   border-radius: 40px;
   background: #fff;
@@ -308,6 +337,15 @@ const DetailValue = styled.div`
   color: ${theme.colors.b100};
 `;
 
+const ChatButton = styled.button`
+  color: ${theme.colors.purple300};
+  ${(props) => props.theme.fonts.b2_regular};
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 const StateBoxList = styled.div`
   display: flex;
   align-items: center;
@@ -316,7 +354,7 @@ const StateBoxList = styled.div`
 
 const ButtonModal = styled(ButtonWrapper)`
   position: absolute;
-  bottom: 70px;
+  bottom: 50px;
   left: 50%;
   transform: translate(-50%);
 `;
