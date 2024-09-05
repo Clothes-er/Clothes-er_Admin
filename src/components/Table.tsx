@@ -36,10 +36,9 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
         `/api/v1/admin/chats/${userSid}/rented-rooms`
       );
       setDetailData(response.data.result);
-      setMore(true);
-      setState(response.data.result.action);
+      setMore(false);
     } catch (error) {
-      console.error("상세 정보 조회 실패", error);
+      console.error("채팅 정보 조회 실패", error);
     }
   };
 
@@ -113,6 +112,8 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
                         "이용 제한"
                       ) : item.action === "DOCKED" ? (
                         "처벌"
+                      ) : item.action === "SUSPENDED" ? (
+                        "유예"
                       ) : (
                         "무시"
                       )}
@@ -293,7 +294,7 @@ const Button = styled.button`
 `;
 
 const Modal = styled.div`
-  width: 496px;
+  width: 550px;
   height: 579px;
   padding: 58px 55px;
   border-radius: 40px;

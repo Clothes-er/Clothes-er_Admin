@@ -10,8 +10,13 @@ export const STATE_BOX = [
         state: "DOCKED",
     },
     {
-        id: 0,
+        id: 2,
         text: "무시",
         state: "IGNORED",
+    },
+    {
+        id: 3,
+        text: "유예",
+        state: "SUSPENDED",
     },
 ]
