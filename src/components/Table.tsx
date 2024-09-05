@@ -66,6 +66,7 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
           "내용",
           "옷장 점수",
           "처리 상태",
+          "거래 중 여부",
           "상태 변경",
         ]
       : [
@@ -103,6 +104,8 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
                     <Td>
                       {item.state === "PENDING" ? "접수 완료" : "처리 완료"}
                     </Td>
+                    <Td>{item.isRented ? "거래 중" : "-"}</Td>
+
                     <Td>
                       {item.action === null ? (
                         <ButtonWrapper>
