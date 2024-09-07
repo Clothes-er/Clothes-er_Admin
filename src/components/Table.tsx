@@ -224,7 +224,10 @@ const Table: React.FC<TableProps> = ({ tableType, list, updateReportList }) => {
                 <DetailLabel>채팅 내역 보기</DetailLabel>{" "}
                 <DetailValue>
                   {detailData.userSid && (
-                    <ChatButton onClick={handleShowChat(detailData.userSid)}>
+                    <ChatButton
+                      onClick={handleShowChat(detailData.userSid)}
+                      disabled={!detailData.isRented}
+                    >
                       보기
                     </ChatButton>
                   )}
@@ -398,6 +401,10 @@ const ChatButton = styled.button`
 
   &:hover {
     text-decoration: underline;
+  }
+
+  &:disabled {
+    color: ${theme.colors.gray800};
   }
 `;
 
