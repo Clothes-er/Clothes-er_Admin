@@ -187,13 +187,13 @@ const Table: React.FC<TableProps> = ({ tableType, list, updateReportList }) => {
               <DetailRow>
                 <DetailLabel>신고대상 ID</DetailLabel>{" "}
                 <DetailValue>
-                  {detailData.reporteeNickname}({detailData.reporteeEmail})
+                  {detailData.reporteeNickname} ({detailData.reporteeEmail})
                 </DetailValue>
               </DetailRow>
               <DetailRow>
                 <DetailLabel>작성자 ID</DetailLabel>{" "}
                 <DetailValue>
-                  {detailData.reporteeNickname}({detailData.reporterEmail})
+                  {detailData.reporteeNickname} ({detailData.reporterEmail})
                 </DetailValue>
               </DetailRow>
               <DetailRow>
