@@ -6,7 +6,7 @@ import Topbar from "@/components/Topbar";
 import { theme } from "@/styles/theme";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import styled from "styled-components";
 
 export interface ChatList {
@@ -90,7 +90,13 @@ const Chat = () => {
   );
 };
 
-export default Chat;
+export default function ChatPaging() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Chat />
+    </Suspense>
+  );
+}
 
 const MaxWidth = styled.div`
   width: 100%;
