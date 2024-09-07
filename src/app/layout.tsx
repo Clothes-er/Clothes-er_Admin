@@ -37,33 +37,10 @@ export default function RootLayout({
         <StyledJsxRegistry>
           <ThemeProvider theme={theme}>
             <GlobalStyles />
-            <AuthProvider>
-              <Column>
-                <Header />
-                <Row>
-                  <VerticalTab />
-                  {children}
-                </Row>
-              </Column>
-            </AuthProvider>
+            <AuthProvider>{children}</AuthProvider>
           </ThemeProvider>
         </StyledJsxRegistry>
       </body>
     </html>
   );
 }
-
-const Column = styled.div`
-  width: 100vw;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-`;
-
-const Row = styled.div`
-  width: 100%;
-  height: calc(100% - 70px);
-  display: flex;
-`;
