@@ -34,15 +34,10 @@ interface ChatMsg {
 
 const ChatDetail = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { id } = useParams();
-  const type = searchParams.get("type");
 
   /* get 메소드에서 받아오는 데이터 상태 저장 */
   const [chatMsg, setChatMsg] = useState<ChatMsg>();
-
-  /* 메뉴 상태 */
-  const [menu, setMenu] = useState<boolean>(false);
 
   /* 채팅 메시지 조회 */
   useEffect(() => {
@@ -54,7 +49,6 @@ const ChatDetail = () => {
       .then((response) => {
         const data = response.data.result;
         setChatMsg(data);
-        console.log("ㅋㅋㅋㅋ", data);
       })
       .catch((error) => {
         console.log(error);
@@ -69,7 +63,6 @@ const ChatDetail = () => {
           width={101}
           height={18}
           alt="logo"
-          onClick={() => router.push("/home")}
           style={{ cursor: "pointer" }}
         />
         <Top>
@@ -81,11 +74,7 @@ const ChatDetail = () => {
             onClick={() => router.back()}
             style={{ cursor: "pointer" }}
           />
-          <Nickname
-            onClick={() => {
-              router.push(`/user/${chatMsg?.opponentSid}`);
-            }}
-          >
+          <Nickname>
             {chatMsg?.opponentNickname}
             {chatMsg?.isRestricted ||
               (chatMsg?.isSuspended && " (신고된 유저)")}

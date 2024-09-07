@@ -9,21 +9,25 @@ import VerticalTab from "@/components/VerticalTab";
 import { useEffect, useState } from "react";
 import { getToken } from "@/hooks/getToken";
 import { AuthProvider } from "@/context/AuthContext";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [email, setEmail] = useState<string | null>(null);
+  const [name, setName] = useState<string | null>(null);
   const [isLogin, setIsLogin] = useState<boolean>(!!getToken());
 
   useEffect(() => {
     if (typeof window !== "undefined" && isLogin) {
-      const storedEmail = localStorage.getItem("email");
-      setEmail(storedEmail);
+      const storedName = localStorage.getItem("name");
+      setName(storedName);
     }
   }, [isLogin]);
+
+  const pathname = usePathname();
+  const isHeader = pathname === "/";
 
   return (
     <html>
@@ -37,10 +41,37 @@ export default function RootLayout({
         <StyledJsxRegistry>
           <ThemeProvider theme={theme}>
             <GlobalStyles />
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              {isHeader ? (
+                <Column>
+                  <Header />
+                  <Row>
+                    <VerticalTab />
+                    {children}
+                  </Row>
+                </Column>
+              ) : (
+                children
+              )}
+            </AuthProvider>
           </ThemeProvider>
         </StyledJsxRegistry>
       </body>
     </html>
   );
 }
+
+const Column = styled.div`
+  width: 100vw;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Row = styled.div`
+  width: 100%;
+  height: calc(100% - 70px);
+  display: flex;
+`;
