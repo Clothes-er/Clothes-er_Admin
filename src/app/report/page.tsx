@@ -6,16 +6,19 @@ import { theme } from "@/styles/theme";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
-interface ReportList {
+export interface ReportList {
   id: number;
+  userSid: string;
   reporteeNickname: string;
+  reporteeEmail?: string;
+  reporterNickname?: string;
+  reporterEmail?: string;
   reason: string;
   content: string;
   closetScore: number;
+  isRented: boolean;
   state: string;
   action: string;
-  isRented: boolean;
-  userSid: string;
   createdAt: string;
 }
 
@@ -33,6 +36,14 @@ export default function ReportPage() {
       });
   };
 
+  const updateReportList = (updatedReport: ReportList) => {
+    setReportList((prevReportList) =>
+      prevReportList.map((report) =>
+        report.id === updatedReport.id ? updatedReport : report
+      )
+    );
+  };
+
   useEffect(() => {
     getReportList();
   }, []);
@@ -43,7 +54,11 @@ export default function ReportPage() {
         <Title>
           신고 관리<Span>접수된 신고 내역을 확인하고, 처리해요.</Span>
         </Title>
-        <Table tableType="report" list={reportList} />
+        <Table
+          tableType="report"
+          list={reportList}
+          updateReportList={updateReportList}
+        />
       </Layout>
     </>
   );
