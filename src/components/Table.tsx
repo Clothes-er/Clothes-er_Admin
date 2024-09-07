@@ -1,24 +1,29 @@
 import AuthAxios from "@/api/authAxios";
 import { STATE_BOX } from "@/constants/state";
 import { theme } from "@/styles/theme";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import StateBox from "./StateBox";
+import { useRouter } from "next/navigation";
+import { ReportList } from "@/app/report/page";
 
 interface TableProps {
   tableType: "report" | "user";
   list: any[];
+  updateReportList?: (updatedReport: ReportList) => void;
 }
 
-const Table: React.FC<TableProps> = ({ tableType, list }) => {
+const Table: React.FC<TableProps> = ({ tableType, list, updateReportList }) => {
+  const router = useRouter();
   const [more, setMore] = useState(false);
-  const [detailData, setDetailData] = useState<any>(null);
-  const [state, setState] = useState<string>();
+  const [detailData, setDetailData] = useState<ReportList>();
+  const [state, setState] = useState<string>("");
 
   const handleMoreModal = (id: number) => async () => {
     if (tableType === "report") {
       try {
         const response = await AuthAxios.get(`/api/v1/admin/reports/${id}`);
+        console.log("상세 정보 조회 성공", response.data.result);
         setDetailData(response.data.result);
         setMore(true);
         setState(response.data.result.action);
@@ -37,6 +42,19 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
       );
       setDetailData(response.data.result);
       setMore(false);
+
+      const width = 480; // 팝업 너비
+      const height = 800; // 팝업 높이
+
+      // 화면 중앙에 위치 계산
+      const left = screen.width / 2 - width / 2;
+      const top = screen.height / 2 - height / 2;
+
+      window.open(
+        `/chat?userSid=${userSid}`, // 채팅 페이지 URL
+        "_blank", // 새로운 탭이나 창으로 열기
+        `width=${width},height=${height},top=${top},left=${left}` // 중앙에 위치시키기 위한 설정
+      );
     } catch (error) {
       console.error("채팅 정보 조회 실패", error);
     }
@@ -51,10 +69,25 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
   };
 
   const handleSave = (reportId: number) => async () => {
-    await AuthAxios.post(`/api/v1/admin/reports/${reportId}`, {
-      action: state,
-    });
-    setMore(false);
+    try {
+      const response = await AuthAxios.post(
+        `/api/v1/admin/reports/${reportId}`,
+        {
+          action: state,
+        }
+      );
+
+      console.log("상태 변경 성공", response);
+      setMore(false);
+
+      if (updateReportList && detailData) {
+        const updatedDetailData = { ...detailData, action: state };
+        updateReportList(updatedDetailData);
+        console.log(detailData);
+      }
+    } catch (error) {
+      console.error("상태 변경 실패", error);
+    }
   };
 
   const columns =
@@ -114,7 +147,7 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
                       ) : item.action === "RESTRICTED" ? (
                         "이용 제한"
                       ) : item.action === "DOCKED" ? (
-                        "처벌"
+                        "점수 삭감"
                       ) : item.action === "SUSPENDED" ? (
                         "유예"
                       ) : (
@@ -142,79 +175,88 @@ const Table: React.FC<TableProps> = ({ tableType, list }) => {
           </tbody>
         </TableDiv>
       </TableWrapper>
-      {more && (
-        <Modal>
-          <Title>신고 내역 조회</Title>
-          <ModalContent>
-            <DetailRow>
-              <DetailLabel>신고 글 번호</DetailLabel>{" "}
-              <DetailValue>{detailData.id}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>신고대상 ID</DetailLabel>{" "}
-              <DetailValue>{detailData.reporteeNickname}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>신고사유</DetailLabel>{" "}
-              <DetailValue>{detailData.reason}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>내용</DetailLabel>{" "}
-              <DetailValue>{detailData.content}</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>옷장 점수</DetailLabel>{" "}
-              <DetailValue>{detailData.closetScore}점</DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>처리 상태</DetailLabel>{" "}
-              <DetailValue>
-                {detailData.state === "PENDING" ? "접수 완료" : "처리 완료"}
-              </DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>현재 거래</DetailLabel>{" "}
-              <DetailValue>
-                {detailData.isRented ? "거래 중" : "거래 없음"}
-              </DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>채팅 내역 보기</DetailLabel>{" "}
-              <DetailValue>
-                {detailData.userSid && (
-                  <ChatButton onClick={handleShowChat(detailData.userSid)}>
-                    보기
-                  </ChatButton>
-                )}
-              </DetailValue>
-            </DetailRow>
-            <DetailRow>
-              <DetailLabel>상태 변경</DetailLabel>{" "}
-              <DetailValue>
-                <StateBoxList>
-                  {STATE_BOX.map((item) => (
-                    <StateBox
-                      key={item.id}
-                      text={item.text}
-                      check={item.state === state}
-                      onClick={handleChangeState(item.state)}
-                      disabled={detailData.action !== null}
-                    />
-                  ))}
-                </StateBoxList>
-              </DetailValue>
-            </DetailRow>
-          </ModalContent>
-          <ButtonModal>
-            <CloseButton onClick={() => setMore(false)}>닫기</CloseButton>
-            <CloseButton
-              onClick={handleSave(detailData.id)}
-              disabled={detailData.action !== null || state == ""}
-            >
-              적용하기
-            </CloseButton>
-          </ButtonModal>
-        </Modal>
+      {more && detailData && (
+        <ModalOverlay>
+          <Modal>
+            <Title>신고 내역 조회</Title>
+            <ModalContent>
+              <DetailRow>
+                <DetailLabel>신고 글 번호</DetailLabel>{" "}
+                <DetailValue>{detailData.id}</DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>신고대상 ID</DetailLabel>{" "}
+                <DetailValue>
+                  {detailData.reporteeNickname}({detailData.reporteeEmail})
+                </DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>작성자 ID</DetailLabel>{" "}
+                <DetailValue>
+                  {detailData.reporteeNickname}({detailData.reporterEmail})
+                </DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>신고사유</DetailLabel>{" "}
+                <DetailValue>{detailData.reason}</DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>내용</DetailLabel>{" "}
+                <DetailValue>{detailData.content}</DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>옷장 점수</DetailLabel>{" "}
+                <DetailValue>{detailData.closetScore}점</DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>처리 상태</DetailLabel>{" "}
+                <DetailValue>
+                  {detailData.state === "PENDING" ? "접수 완료" : "처리 완료"}
+                </DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>현재 거래</DetailLabel>{" "}
+                <DetailValue>
+                  {detailData.isRented ? "거래 중" : "거래 없음"}
+                </DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>채팅 내역 보기</DetailLabel>{" "}
+                <DetailValue>
+                  {detailData.userSid && (
+                    <ChatButton onClick={handleShowChat(detailData.userSid)}>
+                      보기
+                    </ChatButton>
+                  )}
+                </DetailValue>
+              </DetailRow>
+              <DetailRow>
+                <DetailLabel>상태 변경</DetailLabel>{" "}
+                <DetailValue>
+                  <StateBoxList>
+                    {STATE_BOX.map((item) => (
+                      <StateBox
+                        key={item.id}
+                        text={item.text}
+                        check={item.state === state}
+                        onClick={handleChangeState(item.state)}
+                      />
+                    ))}
+                  </StateBoxList>
+                </DetailValue>
+              </DetailRow>
+            </ModalContent>
+            <ButtonModal>
+              <CloseButton onClick={() => setMore(false)}>닫기</CloseButton>
+              <CloseButton
+                onClick={handleSave(detailData.id)}
+                disabled={detailData.action === state || state == ""}
+              >
+                적용하기
+              </CloseButton>
+            </ButtonModal>
+          </Modal>
+        </ModalOverlay>
       )}
     </>
   );
@@ -296,9 +338,18 @@ const Button = styled.button`
   ${(props) => props.theme.fonts.b2_regular};
 `;
 
+const ModalOverlay = styled.div`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+`;
+
 const Modal = styled.div`
   width: 550px;
-  height: 579px;
+  height: 600px;
   padding: 58px 55px;
   border-radius: 40px;
   background: #fff;
