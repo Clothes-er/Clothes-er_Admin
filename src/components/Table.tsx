@@ -193,7 +193,7 @@ const Table: React.FC<TableProps> = ({ tableType, list, updateReportList }) => {
               <DetailRow>
                 <DetailLabel>작성자 ID</DetailLabel>{" "}
                 <DetailValue>
-                  {detailData.reporteeNickname} ({detailData.reporterEmail})
+                  {detailData.reporterNickname} ({detailData.reporterEmail})
                 </DetailValue>
               </DetailRow>
               <DetailRow>
@@ -427,6 +427,7 @@ const CloseButton = styled.button`
   border: none;
   border-radius: 5px;
   background: ${theme.colors.purple500};
+  ${(props) => props.theme.fonts.b2_medium};
   color: ${theme.colors.white};
   font-size: 16px;
   transition: color 200ms, background-color 200ms;
