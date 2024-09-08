@@ -10,12 +10,14 @@ const Header = () => {
   const { isLogin, setIsLogin } = useAuth();
 
   const name = isLogin ? localStorage.getItem("name") : null;
+  const email = isLogin ? localStorage.getItem("email") : null;
 
   const handleLog = () => {
     if (isLogin) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("name");
+      localStorage.removeItem("email");
       setIsLogin(false);
     }
     router.push("/");
@@ -27,7 +29,7 @@ const Header = () => {
       <Right>
         <Info>
           {isLogin
-            ? `관리자   ${name} 님`
+            ? `관리자   ${name} 님 (${email})`
             : "접근 권한을 얻기 위해서는 로그인이 필요해요."}
         </Info>
         <Button $isLogin={isLogin} onClick={handleLog}>
@@ -61,7 +63,7 @@ const Right = styled.div`
 
 const Info = styled.div`
   color: ${theme.colors.white};
-  ${(props) => props.theme.fonts.b2_medium};
+  ${(props) => props.theme.fonts.b2_regular};
 `;
 
 const Button = styled.button<{ $isLogin: boolean }>`
@@ -71,7 +73,7 @@ const Button = styled.button<{ $isLogin: boolean }>`
   align-items: center;
   border-radius: 5px;
   background-color: ${({ $isLogin, theme }) =>
-    $isLogin ? theme.colors.gray500 : theme.colors.purple200};
+    $isLogin ? theme.colors.gray400 : theme.colors.purple200};
   color: ${theme.colors.white};
-  ${(props) => props.theme.fonts.b2_semiBold};
+  ${(props) => props.theme.fonts.b2_medium};
 `;

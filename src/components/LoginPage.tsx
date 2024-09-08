@@ -28,6 +28,7 @@ export default function LoginPage() {
       .then((response) => {
         console.log("로그인 성공", response.data);
         const user = response.data.result;
+        localStorage.setItem("email", user.email);
         localStorage.setItem("name", user.name);
         localStorage.setItem("accessToken", user.token.accessToken);
         localStorage.setItem("refreshToken", user.token.refreshToken);
