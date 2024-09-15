@@ -81,7 +81,11 @@ const Table: React.FC<TableProps> = ({ tableType, list, updateReportList }) => {
       setMore(false);
 
       if (updateReportList && detailData) {
-        const updatedDetailData = { ...detailData, action: state };
+        const updatedDetailData = {
+          ...detailData,
+          state: "ACTIONED",
+          action: state,
+        };
         updateReportList(updatedDetailData);
         console.log(detailData);
       }
