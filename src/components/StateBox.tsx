@@ -33,4 +33,5 @@ const Box = styled.button<{ $check: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
 `;
