@@ -32,6 +32,7 @@ export default function RootLayout({
   return (
     <html>
       <head>
+        <title>Clothes:er 관리자용</title>
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icon-192x192.png"></link>
         <meta name="theme-color" content="#796EF2" />
