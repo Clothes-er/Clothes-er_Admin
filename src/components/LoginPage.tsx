@@ -38,7 +38,15 @@ export default function LoginPage() {
       .catch((error) => {
         console.log("로그인 실패", error);
         if (error.response) {
-          setError(error.response.data.message);
+          if (
+            error.response.data.code === 2130 ||
+            error.response.data.code === 3101
+          ) {
+            console.log(error.response.data.code);
+            setError("이메일 또는 비밀번호가 잘못되었습니다.");
+          } else {
+            setError(error.response.data.message);
+          }
         } else {
           setError("이메일과 비밀번호를 확인해주세요.");
         }
@@ -83,6 +91,7 @@ export default function LoginPage() {
             )}
             로그인 정보 저장하기
           </Save>
+          <Error error={error}>{error}</Error>
           <Button onClick={handleLogin}>로그인</Button>
         </LoginBox>
       </Layout>
@@ -136,7 +145,17 @@ const Save = styled.button<{ $save: boolean }>`
   color: ${({ $save, theme }) =>
     $save ? "rgba(90, 66, 238, 0.7)" : theme.colors.gray900};
   ${(props) => props.theme.fonts.b3_medium};
-  margin-bottom: 32px;
+  margin-bottom: 10px;
+`;
+
+const Error = styled.div<{ error: string }>`
+  text-align: center;
+  height: 16px;
+  padding-left: 10px;
+  color: ${(props) => props.theme.colors.red};
+  ${(props) => props.theme.fonts.c1_regular};
+  opacity: ${(props) => (props.error ? 1 : 0)};
+  margin-bottom: 22px;
 `;
 
 const Button = styled.button`
