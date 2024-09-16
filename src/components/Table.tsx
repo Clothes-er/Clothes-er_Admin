@@ -112,7 +112,7 @@ const Table: React.FC<TableProps> = ({ tableType, list, updateReportList }) => {
           "이메일",
           "전화번호",
           "옷장 점수",
-          "매너 키워드 횟수",
+          "매너 키워드 횟수\n(긍정 / 부정)",
           "거래 건수",
           "이용제한",
         ];
@@ -171,7 +171,13 @@ const Table: React.FC<TableProps> = ({ tableType, list, updateReportList }) => {
                       {item.positiveKeywordCount} / {item.negativeKeywordCount}{" "}
                     </Td>
                     <Td>{item.rentalCount}</Td>
-                    <Td>{item.isRestricted ? "제한됨" : "정상"}</Td>
+                    <Td>
+                      {item.isRestricted
+                        ? "제한됨"
+                        : item.isSuspended
+                        ? "유예"
+                        : "정상"}
+                    </Td>
                   </>
                 )}
               </Tr>
