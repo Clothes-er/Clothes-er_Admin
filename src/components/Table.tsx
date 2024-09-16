@@ -361,8 +361,8 @@ const ModalOverlay = styled.div`
 `;
 
 const Modal = styled.div`
-  width: 550px;
-  height: 600px;
+  width: 600px;
+  height: 630px;
   padding: 58px 55px;
   border-radius: 40px;
   background: #fff;
@@ -424,14 +424,19 @@ const StateBoxList = styled.div`
   gap: 10px;
 `;
 
-const ButtonModal = styled(ButtonWrapper)`
+const ButtonModal = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
   position: absolute;
   bottom: 50px;
   left: 50%;
-  transform: translate(-50%);
+  transform: translateX(-50%);
 `;
 
 const CloseButton = styled.button`
+  height: 39px;
   align-self: flex-end;
   padding: 10px 20px;
   border: none;
