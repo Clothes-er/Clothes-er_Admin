@@ -44,6 +44,10 @@ AuthAxios.interceptors.response.use(
         } catch (tokenRefreshError:any) {
           if (tokenRefreshError.response?.status === 401) {
             console.error("토큰이 만료되었습니다. 재로그인을 해주세요.");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("name");
+            localStorage.removeItem("email");
           }
         }
       }

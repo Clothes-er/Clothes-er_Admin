@@ -1,4 +1,5 @@
 import { TABS } from "@/constants/tab";
+import { getToken } from "@/hooks/getToken";
 import { theme } from "@/styles/theme";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -6,17 +7,20 @@ import styled from "styled-components";
 
 const VerticalTab = () => {
   const router = useRouter();
+  const token = getToken();
+
+  const handleClick = (pathname: string) => {
+    if (token) {
+      router.push(pathname);
+    }
+  };
+
   return (
     <Container>
       관리페이지
       <TabList>
         {TABS.map((item) => (
-          <Tab
-            key={item.id}
-            onClick={() => {
-              router.push(`/${item.pathname}`);
-            }}
-          >
+          <Tab key={item.id} onClick={() => handleClick(item.pathname)}>
             {item.text}
           </Tab>
         ))}
