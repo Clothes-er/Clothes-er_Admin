@@ -10,16 +10,26 @@ const Header = () => {
   const router = useRouter();
   const { isLogin, setIsLogin } = useAuth();
 
-  const name = isLogin ? localStorage.getItem("name") : null;
-  const email = isLogin ? localStorage.getItem("email") : null;
-
+  const [name, setName] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      const storedName = localStorage.getItem("name");
+      const storedEmail = localStorage.getItem("email");
       const token = localStorage.getItem("refreshToken");
+
+      setName(storedName);
+      setEmail(storedEmail);
       setRefreshToken(token);
     }
+  }, []);
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
   }, []);
 
   const handleLog = () => {
@@ -50,13 +60,17 @@ const Header = () => {
       <Image src="/assets/images/logo.svg" width={172} height={33} alt="logo" />
       <Right>
         <Info>
-          {isLogin
-            ? `관리자   ${name} 님 (${email})`
-            : "접근 권한을 얻기 위해서는 로그인이 필요해요."}
+          {isClient
+            ? isLogin
+              ? `관리자   ${name} 님 (${email})`
+              : "접근 권한을 얻기 위해서는 로그인이 필요해요."
+            : "Loading..."}
         </Info>
-        <Button $isLogin={isLogin} onClick={handleLog}>
-          {isLogin ? "로그아웃" : "로그인"}
-        </Button>
+        {isClient && (
+          <Button $isLogin={isLogin} onClick={handleLog}>
+            {isLogin ? "로그아웃" : "로그인"}
+          </Button>
+        )}
       </Right>
     </Wrapper>
   );

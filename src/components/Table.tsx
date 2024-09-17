@@ -119,157 +119,166 @@ const Table: React.FC<TableProps> = ({ tableType, list, updateReportList }) => {
 
   return (
     <>
-      <TableWrapper>
-        <TableDiv>
-          <thead>
-            <tr>
-              {columns.map((column, index) => (
-                <Th key={index}>{column}</Th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {list.map((item) => (
-              <Tr key={item.id} onClick={handleMoreModal(item.id)}>
-                {tableType === "report" ? (
-                  <>
-                    <Td>{item.id}</Td>
-                    <Td>{item.reporteeNickname}</Td>
-                    <Td>{item.reason}</Td>
-                    <Td $summary={true}>{item.content}</Td>
-                    <Td>{item.closetScore}</Td>
-                    <Td>
-                      {item.state === "PENDING" ? "접수 완료" : "처리 완료"}
-                    </Td>
-                    <Td>{item.isRented ? "거래 중" : "-"}</Td>
+      {list.length > 0 ? (
+        <>
+          <TableWrapper>
+            <TableDiv>
+              <thead>
+                <tr>
+                  {columns.map((column, index) => (
+                    <Th key={index}>{column}</Th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((item, index) => (
+                  <Tr key={index} onClick={handleMoreModal(item.id)}>
+                    {tableType === "report" ? (
+                      <>
+                        <Td>{item.id}</Td>
+                        <Td>{item.reporteeNickname}</Td>
+                        <Td>{item.reason}</Td>
+                        <Td $summary={true}>{item.content}</Td>
+                        <Td>{item.closetScore}</Td>
+                        <Td>
+                          {item.state === "PENDING" ? "접수 완료" : "처리 완료"}
+                        </Td>
+                        <Td>{item.isRented ? "거래 중" : "-"}</Td>
 
-                    <Td>
-                      {item.action === null ? (
-                        <ButtonWrapper>
-                          <Button>조치 선택</Button>
-                        </ButtonWrapper>
-                      ) : item.action === "RESTRICTED" ? (
-                        "이용 제한"
-                      ) : item.action === "DOCKED" ? (
-                        "점수 삭감"
-                      ) : item.action === "SUSPENDED" ? (
-                        "유예"
-                      ) : (
-                        "무시"
+                        <Td>
+                          {item.action === null ? (
+                            <ButtonWrapper>
+                              <Button>조치 선택</Button>
+                            </ButtonWrapper>
+                          ) : item.action === "RESTRICTED" ? (
+                            "이용 제한"
+                          ) : item.action === "DOCKED" ? (
+                            "점수 삭감"
+                          ) : item.action === "SUSPENDED" ? (
+                            "유예"
+                          ) : (
+                            "무시"
+                          )}
+                        </Td>
+                      </>
+                    ) : (
+                      <>
+                        <Td>{item.name}</Td>
+                        <Td>{item.nickname}</Td>
+                        <Td>{item.email}</Td>
+                        <Td>{item.phoneNumber}</Td>
+                        <Td>{item.closetScore}</Td>
+                        <Td>
+                          {" "}
+                          {item.positiveKeywordCount} /{" "}
+                          {item.negativeKeywordCount}{" "}
+                        </Td>
+                        <Td>{item.rentalCount}</Td>
+                        <Td>
+                          {item.isRestricted
+                            ? "제한됨"
+                            : item.isSuspended
+                            ? "유예"
+                            : "정상"}
+                        </Td>
+                      </>
+                    )}
+                  </Tr>
+                ))}
+              </tbody>
+            </TableDiv>
+          </TableWrapper>
+          {more && detailData && (
+            <ModalOverlay>
+              <Modal>
+                <Title>신고 내역 조회</Title>
+                <ModalContent>
+                  <DetailRow>
+                    <DetailLabel>신고 글 번호</DetailLabel>{" "}
+                    <DetailValue>{detailData.id}</DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>신고대상 ID</DetailLabel>{" "}
+                    <DetailValue>
+                      {detailData.reporteeNickname} ({detailData.reporteeEmail})
+                    </DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>작성자 ID</DetailLabel>{" "}
+                    <DetailValue>
+                      {detailData.reporterNickname} ({detailData.reporterEmail})
+                    </DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>신고사유</DetailLabel>{" "}
+                    <DetailValue>{detailData.reason}</DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>내용</DetailLabel>{" "}
+                    <DetailValue>{detailData.content}</DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>옷장 점수</DetailLabel>{" "}
+                    <DetailValue>{detailData.closetScore}점</DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>처리 상태</DetailLabel>{" "}
+                    <DetailValue>
+                      {detailData.state === "PENDING"
+                        ? "접수 완료"
+                        : "처리 완료"}
+                    </DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>현재 거래</DetailLabel>{" "}
+                    <DetailValue>
+                      {detailData.isRented ? "거래 중" : "거래 없음"}
+                    </DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>채팅 내역 보기</DetailLabel>{" "}
+                    <DetailValue>
+                      {detailData.userSid && (
+                        <ChatButton
+                          onClick={handleShowChat(detailData.userSid)}
+                          disabled={!detailData.isRented}
+                        >
+                          보기
+                        </ChatButton>
                       )}
-                    </Td>
-                  </>
-                ) : (
-                  <>
-                    <Td>{item.name}</Td>
-                    <Td>{item.nickname}</Td>
-                    <Td>{item.email}</Td>
-                    <Td>{item.phoneNumber}</Td>
-                    <Td>{item.closetScore}</Td>
-                    <Td>
-                      {" "}
-                      {item.positiveKeywordCount} / {item.negativeKeywordCount}{" "}
-                    </Td>
-                    <Td>{item.rentalCount}</Td>
-                    <Td>
-                      {item.isRestricted
-                        ? "제한됨"
-                        : item.isSuspended
-                        ? "유예"
-                        : "정상"}
-                    </Td>
-                  </>
-                )}
-              </Tr>
-            ))}
-          </tbody>
-        </TableDiv>
-      </TableWrapper>
-      {more && detailData && (
-        <ModalOverlay>
-          <Modal>
-            <Title>신고 내역 조회</Title>
-            <ModalContent>
-              <DetailRow>
-                <DetailLabel>신고 글 번호</DetailLabel>{" "}
-                <DetailValue>{detailData.id}</DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>신고대상 ID</DetailLabel>{" "}
-                <DetailValue>
-                  {detailData.reporteeNickname} ({detailData.reporteeEmail})
-                </DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>작성자 ID</DetailLabel>{" "}
-                <DetailValue>
-                  {detailData.reporterNickname} ({detailData.reporterEmail})
-                </DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>신고사유</DetailLabel>{" "}
-                <DetailValue>{detailData.reason}</DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>내용</DetailLabel>{" "}
-                <DetailValue>{detailData.content}</DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>옷장 점수</DetailLabel>{" "}
-                <DetailValue>{detailData.closetScore}점</DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>처리 상태</DetailLabel>{" "}
-                <DetailValue>
-                  {detailData.state === "PENDING" ? "접수 완료" : "처리 완료"}
-                </DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>현재 거래</DetailLabel>{" "}
-                <DetailValue>
-                  {detailData.isRented ? "거래 중" : "거래 없음"}
-                </DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>채팅 내역 보기</DetailLabel>{" "}
-                <DetailValue>
-                  {detailData.userSid && (
-                    <ChatButton
-                      onClick={handleShowChat(detailData.userSid)}
-                      disabled={!detailData.isRented}
-                    >
-                      보기
-                    </ChatButton>
-                  )}
-                </DetailValue>
-              </DetailRow>
-              <DetailRow>
-                <DetailLabel>상태 변경</DetailLabel>{" "}
-                <DetailValue>
-                  <StateBoxList>
-                    {STATE_BOX.map((item) => (
-                      <StateBox
-                        key={item.id}
-                        text={item.text}
-                        check={item.state === state}
-                        onClick={handleChangeState(item.state)}
-                      />
-                    ))}
-                  </StateBoxList>
-                </DetailValue>
-              </DetailRow>
-            </ModalContent>
-            <ButtonModal>
-              <CloseButton onClick={() => setMore(false)}>닫기</CloseButton>
-              <CloseButton
-                onClick={handleSave(detailData.id)}
-                disabled={detailData.action === state || state == ""}
-              >
-                적용하기
-              </CloseButton>
-            </ButtonModal>
-          </Modal>
-        </ModalOverlay>
+                    </DetailValue>
+                  </DetailRow>
+                  <DetailRow>
+                    <DetailLabel>상태 변경</DetailLabel>{" "}
+                    <DetailValue>
+                      <StateBoxList>
+                        {STATE_BOX.map((item) => (
+                          <StateBox
+                            key={item.id}
+                            text={item.text}
+                            check={item.state === state}
+                            onClick={handleChangeState(item.state)}
+                          />
+                        ))}
+                      </StateBoxList>
+                    </DetailValue>
+                  </DetailRow>
+                </ModalContent>
+                <ButtonModal>
+                  <CloseButton onClick={() => setMore(false)}>닫기</CloseButton>
+                  <CloseButton
+                    onClick={handleSave(detailData.id)}
+                    disabled={detailData.action === state || state == ""}
+                  >
+                    적용하기
+                  </CloseButton>
+                </ButtonModal>
+              </Modal>
+            </ModalOverlay>
+          )}
+        </>
+      ) : (
+        <NoData> 결과가 없습니다.</NoData>
       )}
     </>
   );
@@ -455,4 +464,15 @@ const CloseButton = styled.button`
   &:disabled {
     background-color: ${theme.colors.gray300};
   }
+`;
+
+const NoData = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${theme.colors.gray500};
+  font-size: 24px;
+  ${(props) => props.theme.fonts.b2_regular};
 `;

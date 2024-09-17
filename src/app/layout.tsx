@@ -37,6 +37,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192x192.png"></link>
         <meta name="theme-color" content="#796EF2" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
       </head>
       <body>
         <StyledJsxRegistry>

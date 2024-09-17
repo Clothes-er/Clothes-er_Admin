@@ -24,15 +24,18 @@ export interface ReportList {
 
 export default function ReportPage() {
   const [reportList, setReportList] = useState<ReportList[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const getReportList = () => {
     AuthAxios.get("/api/v1/admin/reports")
       .then((response) => {
         console.log("신고 목록 조회 성공", response.data);
         setReportList(response.data.result);
+        setLoading(false);
       })
       .catch((error) => {
         console.log("신고 목록 조회 실패", error);
+        setLoading(false);
       });
   };
 
@@ -51,14 +54,20 @@ export default function ReportPage() {
   return (
     <>
       <Layout>
-        <Title>
-          신고 관리<Span>접수된 신고 내역을 확인하고, 처리해요.</Span>
-        </Title>
-        <Table
-          tableType="report"
-          list={reportList}
-          updateReportList={updateReportList}
-        />
+        {loading ? (
+          <Loading>페이지를 불러오고 있어요...</Loading>
+        ) : (
+          <>
+            <Title>
+              신고 관리<Span>접수된 신고 내역을 확인하고, 처리해요.</Span>
+            </Title>
+            <Table
+              tableType="report"
+              list={reportList}
+              updateReportList={updateReportList}
+            />
+          </>
+        )}
       </Layout>
     </>
   );
@@ -88,4 +97,15 @@ const Title = styled.div`
 const Span = styled.span`
   color: ${theme.colors.black};
   ${(props) => props.theme.fonts.b1_medium};
+`;
+
+const Loading = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${theme.colors.gray500};
+  font-size: 24px;
+  ${(props) => props.theme.fonts.b2_regular};
 `;

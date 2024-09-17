@@ -4,7 +4,7 @@ import AuthAxios from "@/api/authAxios";
 import Table from "@/components/Table";
 import { theme } from "@/styles/theme";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 
 interface UserList {
@@ -21,12 +21,13 @@ interface UserList {
 export default function UsrePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [reportList, setReportList] = useState<UserList[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
 
-  const getUserList = () => {
+  const getUserList = useCallback(() => {
     AuthAxios.get("/api/v1/admin/users", {
       params: {
         search: searchTerm,
@@ -35,37 +36,45 @@ export default function UsrePage() {
       .then((response) => {
         console.log("회원 전체 목록 조회 성공", response.data);
         setReportList(response.data.result);
+        setLoading(false);
       })
       .catch((error) => {
         console.log("회원 전체 조회 실패", error);
+        setLoading(false);
       });
-  };
+  }, [searchTerm]);
 
   useEffect(() => {
     getUserList();
-  }, [searchTerm]);
+  }, [getUserList]);
 
   return (
     <>
       <Layout>
-        <Title>
-          유저 정보<Span>유저 정보를 조회하고, 관리해요.</Span>
-        </Title>
-        <InputWrapper>
-          <Image
-            src="/assets/icons/ic_search.svg"
-            width={21}
-            height={20}
-            alt="search"
-          />
-          <Input
-            type="text"
-            value={searchTerm}
-            onChange={handleSearchChange}
-            placeholder="유저 정보 검색..."
-          />
-        </InputWrapper>
-        <Table tableType="user" list={reportList} />
+        {loading ? (
+          <Loading>페이지를 불러오고 있어요...</Loading>
+        ) : (
+          <>
+            <Title>
+              유저 정보<Span>유저 정보를 조회하고, 관리해요.</Span>
+            </Title>
+            <InputWrapper>
+              <Image
+                src="/assets/icons/ic_search.svg"
+                width={21}
+                height={20}
+                alt="search"
+              />
+              <Input
+                type="text"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                placeholder="유저 정보 검색..."
+              />
+            </InputWrapper>
+            <Table tableType="user" list={reportList} />
+          </>
+        )}
       </Layout>
     </>
   );
@@ -120,4 +129,15 @@ const Input = styled.input`
   &:focus {
     outline: none;
   }
+`;
+
+const Loading = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: ${theme.colors.gray500};
+  font-size: 24px;
+  ${(props) => props.theme.fonts.b2_regular};
 `;
