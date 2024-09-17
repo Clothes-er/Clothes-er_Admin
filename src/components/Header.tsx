@@ -1,8 +1,9 @@
+import AuthAxios from "@/api/authAxios";
 import { useAuth } from "@/context/AuthContext";
 import { theme } from "@/styles/theme";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Header = () => {
@@ -12,12 +13,33 @@ const Header = () => {
   const name = isLogin ? localStorage.getItem("name") : null;
   const email = isLogin ? localStorage.getItem("email") : null;
 
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("refreshToken");
+      setRefreshToken(token);
+    }
+  }, []);
+
   const handleLog = () => {
     if (isLogin) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("name");
-      localStorage.removeItem("email");
+      if (refreshToken) {
+        AuthAxios.post("/api/v1/users/logout", {
+          refreshToken,
+        })
+          .then((response) => {
+            console.log("로그아웃 성공", response);
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("name");
+            localStorage.removeItem("email");
+            router.push("/");
+          })
+          .catch((error) => {
+            console.log("로그아웃 실패", error);
+          });
+      }
       setIsLogin(false);
     }
     router.push("/");
